@@ -4,6 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 
 const XP_PER_LEVEL = 100;
 
+// Umbral de aciertos para considerar una lección "aprobada" (passed), a
+// diferencia de solo "completada" (llegar al final, gane o pierda).
+const PASS_THRESHOLD = 0.6;
+
 const TRACK_A_BADGES = {
   counter: "Contador Estrella (Bronce)",
   noGiveUp: "No me rindo",
@@ -35,14 +39,18 @@ function daysBetween(a: string, b: string): number {
 export async function awardXP(
   profileId: string,
   lessonId: string,
-  xpEarned: number
+  xpEarned: number,
+  correct: number,
+  total: number
 ): Promise<AwardXPResult> {
   const supabase = createClient();
 
-  // --- user_progress: upsert (marks completed, tracks attempts/best_score) ---
+  const passedThisAttempt = total > 0 && correct / total >= PASS_THRESHOLD;
+
+  // --- user_progress: upsert (marks completed, tracks attempts/best_score/passed) ---
   const { data: existingProgress } = await supabase
     .from("user_progress")
-    .select("attempts, best_score")
+    .select("attempts, best_score, passed")
     .eq("profile_id", profileId)
     .eq("lesson_id", lessonId)
     .maybeSingle();
@@ -52,6 +60,7 @@ export async function awardXP(
       profile_id: profileId,
       lesson_id: lessonId,
       completed: true,
+      passed: (existingProgress?.passed ?? false) || passedThisAttempt,
       attempts: (existingProgress?.attempts ?? 0) + 1,
       best_score: Math.max(existingProgress?.best_score ?? 0, xpEarned),
       completed_at: new Date().toISOString(),
@@ -118,37 +127,31 @@ export async function awardXP(
 
     const { data: progressRows } = await supabase
       .from("user_progress")
-      .select("completed, attempts, best_score, lessons(title, xp_reward)")
+      .select("attempts, passed, lessons(title)")
       .eq("profile_id", profileId);
 
-    const completedTitles = new Set(
+    const passedTitles = new Set(
       (progressRows ?? [])
-        .filter((row) => row.completed)
+        .filter((row) => row.passed)
         .map((row) => (row.lessons as unknown as { title: string } | null)?.title)
     );
-    const hasRetriedAndCompleted = (progressRows ?? []).some(
-      (row) => row.completed && row.attempts >= 2
+    // "Falló antes, ahora sí lo logró": necesita más de un intento en total y
+    // haber aprobado (en algún momento, no necesariamente el último intento).
+    const hasFailedThenPassed = (progressRows ?? []).some(
+      (row) => row.passed && row.attempts >= 2
     );
-
-    // El boss tiene vidas y tiempo límite: terminar la lección no es lo mismo
-    // que vencerla (puede terminar por quedarse sin vidas/tiempo). Solo cuenta
-    // como "vencido" si el mejor intento obtuvo el XP completo de la lección
-    // (es decir, todas las rondas correctas).
-    const bossRow = (progressRows ?? []).find(
+    const bossDefeated = (progressRows ?? []).some(
       (row) =>
+        row.passed &&
         (row.lessons as unknown as { title: string } | null)?.title ===
-        "Reto del Mercado (Boss Final)"
+          "Reto del Mercado (Boss Final)"
     );
-    const bossDefeated =
-      !!bossRow?.completed &&
-      bossRow.best_score ===
-        (bossRow.lessons as unknown as { xp_reward: number } | null)?.xp_reward;
 
     const qualifies: Record<string, boolean> = {
       [TRACK_A_BADGES.counter]:
-        completedTitles.has("Contando del 1 al 10") &&
-        completedTitles.has("Contando del 11 al 20"),
-      [TRACK_A_BADGES.noGiveUp]: hasRetriedAndCompleted,
+        passedTitles.has("Contando del 1 al 10") &&
+        passedTitles.has("Contando del 11 al 20"),
+      [TRACK_A_BADGES.noGiveUp]: hasFailedThenPassed,
       [TRACK_A_BADGES.bossSlayer]: bossDefeated,
     };
 

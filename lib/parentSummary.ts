@@ -57,7 +57,7 @@ export async function getChildSummaries(
       supabase.from("user_stats").select("*").in("profile_id", targetIds),
       supabase
         .from("user_progress")
-        .select("profile_id, completed, attempts, lesson_id, lessons(id, title, track_id)")
+        .select("profile_id, passed, attempts, lesson_id, lessons(id, title, track_id)")
         .in("profile_id", targetIds),
       supabase
         .from("user_badges")
@@ -87,23 +87,23 @@ export async function getChildSummaries(
     const profileProgress = (progress ?? []).filter((p) => p.profile_id === profile.id);
     const profileBadges = (badges ?? []).filter((b) => b.profile_id === profile.id);
 
-    const completedByTrack = new Map<string, number>();
+    const passedByTrack = new Map<string, number>();
     for (const row of profileProgress) {
       const trackId = (row.lessons as unknown as { track_id: string } | null)?.track_id;
-      if (row.completed && trackId) {
-        completedByTrack.set(trackId, (completedByTrack.get(trackId) ?? 0) + 1);
+      if (row.passed && trackId) {
+        passedByTrack.set(trackId, (passedByTrack.get(trackId) ?? 0) + 1);
       }
     }
 
     const trackProgress = Array.from(lessonsPerTrack.entries()).map(([trackId, total]) => ({
       trackId,
       trackName: trackNameById.get(trackId) ?? "Track",
-      completed: completedByTrack.get(trackId) ?? 0,
+      completed: passedByTrack.get(trackId) ?? 0,
       total,
     }));
 
     const strugglingLessons = profileProgress
-      .filter((row) => !row.completed && row.attempts >= 3)
+      .filter((row) => !row.passed && row.attempts >= 3)
       .map((row) => ({
         lessonId: row.lesson_id,
         title: (row.lessons as unknown as { title: string } | null)?.title ?? "Lección",

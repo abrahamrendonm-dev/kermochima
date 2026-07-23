@@ -39,7 +39,7 @@ export function LessonRunner({
     total: number;
   }) {
     const xpEarned = Math.round((lesson.xp_reward * correct) / total);
-    const awarded = await awardXP(profileId, lesson.id, xpEarned);
+    const awarded = await awardXP(profileId, lesson.id, xpEarned, correct, total);
     setResult(awarded);
   }
 
