@@ -19,11 +19,18 @@ export function ProfileCard({ profile }: { profile: Profile }) {
 
   const age = new Date().getFullYear() - profile.birth_year;
 
+  function selectProfile() {
+    // 30 días; solo un puntero de conveniencia para saber "quién está jugando" —
+    // RLS sigue protegiendo los datos sin importar lo que diga esta cookie.
+    document.cookie = `active_profile_id=${profile.id}; path=/; max-age=${60 * 60 * 24 * 30}`;
+    router.push(`/dashboard/${profile.id}`);
+  }
+
   function handleClick() {
     if (profile.pin) {
       setEnteringPin(true);
     } else {
-      router.push(`/dashboard/${profile.id}`);
+      selectProfile();
     }
   }
 
@@ -34,7 +41,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
 
     if (digits.length === 4) {
       if (digits === profile.pin) {
-        router.push(`/dashboard/${profile.id}`);
+        selectProfile();
       } else {
         setError(true);
         setPin("");

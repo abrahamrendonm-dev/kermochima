@@ -1,6 +1,9 @@
+import { cookies } from "next/headers";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { QuizPlayer } from "@/components/lessons/QuizPlayer";
+import { LessonRunner } from "@/components/lessons/LessonRunner";
+import type { QuizContent } from "@/components/lessons/QuizPlayer";
 
 export default async function LessonPage({
   params,
@@ -8,6 +11,7 @@ export default async function LessonPage({
   params: { lessonId: string };
 }) {
   const supabase = createClient();
+  const profileId = cookies().get("active_profile_id")?.value;
 
   const { data: lesson } = await supabase
     .from("lessons")
@@ -19,12 +23,33 @@ export default async function LessonPage({
     notFound();
   }
 
+  if (!profileId) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
+        <p className="text-gray-600">
+          Primero selecciona quién va a jugar.
+        </p>
+        <Link href="/profiles" className="text-indigo-600 hover:underline">
+          Ir al selector de perfiles
+        </Link>
+      </main>
+    );
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center gap-4 p-8">
       <h1 className="text-xl font-bold">{lesson.title}</h1>
 
       {lesson.type === "quiz" ? (
-        <QuizPlayer content={lesson.content} />
+        <LessonRunner
+          profileId={profileId}
+          lesson={{
+            id: lesson.id,
+            type: lesson.type,
+            xp_reward: lesson.xp_reward,
+            content: lesson.content as QuizContent,
+          }}
+        />
       ) : (
         <p className="text-gray-500">
           El reproductor para lecciones tipo &quot;{lesson.type}&quot; llega

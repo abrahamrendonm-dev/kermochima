@@ -103,11 +103,46 @@ async function upsertLesson(trackId, lesson) {
   return inserted.id;
 }
 
+const BADGE_ICONS = {
+  "Contador Estrella (Bronce)": "🥉",
+  "No me rindo": "💪",
+  "Domador del Mercado": "🏅",
+};
+
+async function upsertBadge(badge) {
+  const { data: existing, error: selectError } = await supabase
+    .from("badges")
+    .select("id")
+    .eq("name", badge.name)
+    .maybeSingle();
+  if (selectError) throw selectError;
+  if (existing) return existing.id;
+
+  const { data: inserted, error: insertError } = await supabase
+    .from("badges")
+    .insert({
+      name: badge.name,
+      description: badge.unlock_condition,
+      icon: BADGE_ICONS[badge.name] ?? "🏅",
+      category: badge.category,
+      unlock_condition: badge.unlock_condition,
+    })
+    .select("id")
+    .single();
+  if (insertError) throw insertError;
+  console.log(`Created badge "${badge.name}"`);
+  return inserted.id;
+}
+
 const subjectId = await upsertSubject(data.track.subject);
 const trackId = await upsertTrack(subjectId, data.track);
 
 for (const lesson of data.lessons) {
   await upsertLesson(trackId, lesson);
+}
+
+for (const badge of data.badges_in_track ?? []) {
+  await upsertBadge(badge);
 }
 
 console.log("Seed complete.");

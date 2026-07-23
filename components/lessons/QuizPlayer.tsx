@@ -9,7 +9,7 @@ type Question = {
   answer: string | number;
 };
 
-type QuizContent = {
+export type QuizContent = {
   instructions?: string;
   questions: Question[];
 };
