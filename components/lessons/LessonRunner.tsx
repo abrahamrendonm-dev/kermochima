@@ -7,6 +7,10 @@ import {
   DragDropPlayer,
   type DragDropContent,
 } from "@/components/lessons/DragDropPlayer";
+import {
+  GameBossPlayer,
+  type GameBossContent,
+} from "@/components/lessons/GameBossPlayer";
 import { XPToast } from "@/components/gamification/XPToast";
 import { awardXP, type AwardXPResult } from "@/lib/xpEngine";
 
@@ -14,7 +18,7 @@ type Lesson = {
   id: string;
   type: string;
   xp_reward: number;
-  content: QuizContent | DragDropContent;
+  content: QuizContent | DragDropContent | GameBossContent;
 };
 
 export function LessonRunner({
@@ -50,6 +54,12 @@ export function LessonRunner({
       {lesson.type === "drag_drop" && (
         <DragDropPlayer
           content={lesson.content as unknown as DragDropContent}
+          onComplete={handleComplete}
+        />
+      )}
+      {(lesson.type === "game" || lesson.type === "boss") && (
+        <GameBossPlayer
+          content={lesson.content as unknown as GameBossContent}
           onComplete={handleComplete}
         />
       )}

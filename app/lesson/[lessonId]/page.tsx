@@ -5,8 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { LessonRunner } from "@/components/lessons/LessonRunner";
 import type { QuizContent } from "@/components/lessons/QuizPlayer";
 import type { DragDropContent } from "@/components/lessons/DragDropPlayer";
+import type { GameBossContent } from "@/components/lessons/GameBossPlayer";
 
-const RUNNABLE_TYPES = ["quiz", "drag_drop"];
+const RUNNABLE_TYPES = ["quiz", "drag_drop", "game", "boss"];
 
 export default async function LessonPage({
   params,
@@ -50,7 +51,7 @@ export default async function LessonPage({
             id: lesson.id,
             type: lesson.type,
             xp_reward: lesson.xp_reward,
-            content: lesson.content as QuizContent | DragDropContent,
+            content: lesson.content as QuizContent | DragDropContent | GameBossContent,
           }}
         />
       ) : (

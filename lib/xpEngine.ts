@@ -118,7 +118,7 @@ export async function awardXP(
 
     const { data: progressRows } = await supabase
       .from("user_progress")
-      .select("completed, attempts, lessons(title)")
+      .select("completed, attempts, best_score, lessons(title, xp_reward)")
       .eq("profile_id", profileId);
 
     const completedTitles = new Set(
@@ -130,14 +130,26 @@ export async function awardXP(
       (row) => row.completed && row.attempts >= 2
     );
 
+    // El boss tiene vidas y tiempo límite: terminar la lección no es lo mismo
+    // que vencerla (puede terminar por quedarse sin vidas/tiempo). Solo cuenta
+    // como "vencido" si el mejor intento obtuvo el XP completo de la lección
+    // (es decir, todas las rondas correctas).
+    const bossRow = (progressRows ?? []).find(
+      (row) =>
+        (row.lessons as unknown as { title: string } | null)?.title ===
+        "Reto del Mercado (Boss Final)"
+    );
+    const bossDefeated =
+      !!bossRow?.completed &&
+      bossRow.best_score ===
+        (bossRow.lessons as unknown as { xp_reward: number } | null)?.xp_reward;
+
     const qualifies: Record<string, boolean> = {
       [TRACK_A_BADGES.counter]:
         completedTitles.has("Contando del 1 al 10") &&
         completedTitles.has("Contando del 11 al 20"),
       [TRACK_A_BADGES.noGiveUp]: hasRetriedAndCompleted,
-      [TRACK_A_BADGES.bossSlayer]: completedTitles.has(
-        "Reto del Mercado (Boss Final)"
-      ),
+      [TRACK_A_BADGES.bossSlayer]: bossDefeated,
     };
 
     for (const badge of candidateBadges) {

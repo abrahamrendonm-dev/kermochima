@@ -14,6 +14,10 @@ export type DragDropContent = {
 
 type Round = { prompt: string; answer: string | number };
 
+export function formatPatternSequence(sequence: string[]): string {
+  return sequence.join("  ");
+}
+
 function buildRounds(content: DragDropContent): Round[] {
   if (content.items) {
     return content.items.map((item) => ({
@@ -23,7 +27,7 @@ function buildRounds(content: DragDropContent): Round[] {
   }
   if (content.patterns) {
     return content.patterns.map((pattern) => ({
-      prompt: pattern.sequence.join("  "),
+      prompt: formatPatternSequence(pattern.sequence),
       answer: pattern.answer,
     }));
   }
