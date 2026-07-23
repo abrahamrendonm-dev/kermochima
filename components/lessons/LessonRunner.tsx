@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { QuizPlayer, type QuizContent } from "@/components/lessons/QuizPlayer";
+import {
+  DragDropPlayer,
+  type DragDropContent,
+} from "@/components/lessons/DragDropPlayer";
 import { XPToast } from "@/components/gamification/XPToast";
 import { awardXP, type AwardXPResult } from "@/lib/xpEngine";
 
@@ -10,7 +14,7 @@ type Lesson = {
   id: string;
   type: string;
   xp_reward: number;
-  content: QuizContent;
+  content: QuizContent | DragDropContent;
 };
 
 export function LessonRunner({
@@ -38,7 +42,16 @@ export function LessonRunner({
   return (
     <>
       {lesson.type === "quiz" && (
-        <QuizPlayer content={lesson.content} onComplete={handleComplete} />
+        <QuizPlayer
+          content={lesson.content as unknown as QuizContent}
+          onComplete={handleComplete}
+        />
+      )}
+      {lesson.type === "drag_drop" && (
+        <DragDropPlayer
+          content={lesson.content as unknown as DragDropContent}
+          onComplete={handleComplete}
+        />
       )}
 
       {result && (

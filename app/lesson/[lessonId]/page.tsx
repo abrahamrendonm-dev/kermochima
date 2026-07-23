@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LessonRunner } from "@/components/lessons/LessonRunner";
 import type { QuizContent } from "@/components/lessons/QuizPlayer";
+import type { DragDropContent } from "@/components/lessons/DragDropPlayer";
+
+const RUNNABLE_TYPES = ["quiz", "drag_drop"];
 
 export default async function LessonPage({
   params,
@@ -40,14 +43,14 @@ export default async function LessonPage({
     <main className="flex min-h-screen flex-col items-center gap-4 p-8">
       <h1 className="text-xl font-bold">{lesson.title}</h1>
 
-      {lesson.type === "quiz" ? (
+      {RUNNABLE_TYPES.includes(lesson.type) ? (
         <LessonRunner
           profileId={profileId}
           lesson={{
             id: lesson.id,
             type: lesson.type,
             xp_reward: lesson.xp_reward,
-            content: lesson.content as QuizContent,
+            content: lesson.content as QuizContent | DragDropContent,
           }}
         />
       ) : (
