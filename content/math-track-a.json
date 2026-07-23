@@ -1,0 +1,117 @@
+{
+  "track": {
+    "name": "Track A: Números y Conteo",
+    "subject": "Matemáticas",
+    "min_age": 4,
+    "max_age": 6,
+    "order_index": 1
+  },
+  "lessons": [
+    {
+      "title": "Contando del 1 al 10",
+      "type": "drag_drop",
+      "xp_reward": 10,
+      "order_index": 1,
+      "content": {
+        "instructions": "Arrastra el número correcto a la canasta con esa cantidad de frutas",
+        "items": [
+          { "visual": "🍎", "count": 3, "answer": 3 },
+          { "visual": "🍌", "count": 5, "answer": 5 },
+          { "visual": "🍇", "count": 7, "answer": 7 },
+          { "visual": "🍊", "count": 2, "answer": 2 },
+          { "visual": "🍓", "count": 9, "answer": 9 }
+        ],
+        "options": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      }
+    },
+    {
+      "title": "Contando del 11 al 20",
+      "type": "quiz",
+      "xp_reward": 10,
+      "order_index": 2,
+      "content": {
+        "instructions": "Cuenta los objetos y selecciona el número correcto",
+        "questions": [
+          { "visual": "⭐️ x14", "question": "¿Cuántas estrellas hay?", "options": [12, 14, 16, 11], "answer": 14 },
+          { "visual": "🐟 x18", "question": "¿Cuántos peces hay?", "options": [15, 17, 18, 20], "answer": 18 },
+          { "visual": "🎈 x11", "question": "¿Cuántos globos hay?", "options": [11, 13, 10, 19], "answer": 11 },
+          { "visual": "🦋 x20", "question": "¿Cuántas mariposas hay?", "options": [17, 19, 20, 16], "answer": 20 },
+          { "visual": "🌸 x13", "question": "¿Cuántas flores hay?", "options": [13, 14, 12, 15], "answer": 13 }
+        ]
+      }
+    },
+    {
+      "title": "Mayor, Menor o Igual",
+      "type": "game",
+      "xp_reward": 12,
+      "order_index": 3,
+      "content": {
+        "instructions": "Observa la balanza y decide qué lado pesa más (tiene más objetos)",
+        "game_mechanic": "balanza_visual",
+        "rounds": [
+          { "left_count": 5, "right_count": 3, "answer": "left" },
+          { "left_count": 2, "right_count": 8, "answer": "right" },
+          { "left_count": 6, "right_count": 6, "answer": "equal" },
+          { "left_count": 9, "right_count": 4, "answer": "left" },
+          { "left_count": 1, "right_count": 7, "answer": "right" }
+        ]
+      }
+    },
+    {
+      "title": "Formas Geométricas Básicas",
+      "type": "quiz",
+      "xp_reward": 10,
+      "order_index": 4,
+      "content": {
+        "instructions": "Identifica la forma correcta",
+        "questions": [
+          { "visual": "🔺", "question": "¿Qué forma es esta?", "options": ["Círculo", "Triángulo", "Cuadrado", "Estrella"], "answer": "Triángulo" },
+          { "visual": "🔵", "question": "¿Qué forma es esta?", "options": ["Círculo", "Rectángulo", "Rombo", "Triángulo"], "answer": "Círculo" },
+          { "visual": "🟦", "question": "¿Qué forma es esta?", "options": ["Círculo", "Cuadrado", "Triángulo", "Óvalo"], "answer": "Cuadrado" },
+          { "visual": "⭐", "question": "¿Qué forma es esta?", "options": ["Estrella", "Rombo", "Cuadrado", "Círculo"], "answer": "Estrella" },
+          { "visual": "🟥", "question": "¿De qué color es este cuadrado?", "options": ["Azul", "Rojo", "Verde", "Amarillo"], "answer": "Rojo" }
+        ]
+      }
+    },
+    {
+      "title": "Patrones y Secuencias",
+      "type": "drag_drop",
+      "xp_reward": 12,
+      "order_index": 5,
+      "content": {
+        "instructions": "Completa el patrón arrastrando la figura que sigue",
+        "patterns": [
+          { "sequence": ["🔴", "🔵", "🔴", "🔵", "?"], "answer": "🔴" },
+          { "sequence": ["🟢", "🟢", "🟡", "🟢", "🟢", "?"], "answer": "🟡" },
+          { "sequence": ["🔺", "🔺", "🔵", "🔺", "🔺", "?"], "answer": "🔵" },
+          { "sequence": ["⭐", "🌙", "⭐", "🌙", "?"], "answer": "⭐" }
+        ],
+        "options": ["🔴", "🔵", "🟡", "🟢", "🔺", "⭐", "🌙"]
+      }
+    },
+    {
+      "title": "Reto del Mercado (Boss Final)",
+      "type": "boss",
+      "xp_reward": 30,
+      "order_index": 6,
+      "content": {
+        "instructions": "¡El mercado está lleno de frutas! Cuenta rápido y compara antes de que se acabe el tiempo",
+        "time_limit_seconds": 90,
+        "lives": 3,
+        "rounds": [
+          { "task": "count", "visual": "🍎🍎🍎🍎🍎🍎", "question": "¿Cuántas manzanas hay?", "answer": 6 },
+          { "task": "compare", "left": "🍌🍌🍌", "right": "🍌🍌🍌🍌🍌🍌🍌", "question": "¿Qué lado tiene más plátanos?", "answer": "right" },
+          { "task": "count", "visual": "🍇🍇🍇🍇🍇🍇🍇🍇🍇", "question": "¿Cuántas uvas hay?", "answer": 9 },
+          { "task": "pattern", "sequence": ["🍎", "🍌", "🍎", "🍌", "?"], "answer": "🍎" },
+          { "task": "compare", "left": "🍊🍊🍊🍊🍊", "right": "🍊🍊", "question": "¿Qué lado tiene más naranjas?", "answer": "left" }
+        ],
+        "badge_unlocked": "Domador del Mercado"
+      }
+    }
+  ],
+  "badges_in_track": [
+    { "name": "Contador Estrella (Bronce)", "category": "progreso", "unlock_condition": "Completar Contando del 1 al 10 y 11 al 20" },
+    { "name": "No me rindo", "category": "crecimiento", "unlock_condition": "Reintentar una lección fallada hasta lograrla" },
+    { "name": "Domador del Mercado", "category": "boss", "unlock_condition": "Vencer el Reto del Mercado" }
+  ]
+}
