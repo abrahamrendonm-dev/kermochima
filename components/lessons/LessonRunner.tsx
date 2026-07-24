@@ -62,6 +62,7 @@ export function LessonRunner({
       {(lesson.type === "game" || lesson.type === "boss") && (
         <GameBossPlayer
           content={lesson.content as unknown as GameBossContent}
+          type={lesson.type as "game" | "boss"}
           onComplete={handleComplete}
         />
       )}

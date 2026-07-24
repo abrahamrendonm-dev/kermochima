@@ -15,13 +15,16 @@ const PASS_THRESHOLD = 0.6;
 const PROGRESS_BADGE_LESSONS: Record<string, string[]> = {
   "Contador Estrella (Bronce)": ["Contando del 1 al 10", "Contando del 11 al 20"],
   "Sumador Estrella": ["Suma sin llevar", "Suma con llevar"],
+  "Explorador de Colores": ["Los Colores", "Las Formas"],
 };
 
-// Insignias "boss": se otorgan cuando la lección boss correspondiente (por
-// título) tiene passed=true.
-const BOSS_BADGE_LESSON: Record<string, string> = {
+// Insignias de una sola lección "cúspide" del track (boss o, como en Pre-A,
+// una lección "game" de repaso final): se otorgan cuando esa lección (por
+// título) tiene passed=true. No asume que la lección sea type "boss".
+const SINGLE_LESSON_BADGE: Record<string, string> = {
   "Domador del Mercado": "Reto del Mercado (Boss Final)",
   "Velocista Matemático": "Carrera de Sumas (Boss Final)",
+  "Estrella Pre-A": "Fiesta de Repaso",
 };
 
 // Insignia "crecimiento": regla global, no depende de lecciones específicas
@@ -30,7 +33,7 @@ const GROWTH_BADGE_NAME = "No me rindo";
 
 const ALL_BADGE_NAMES = [
   ...Object.keys(PROGRESS_BADGE_LESSONS),
-  ...Object.keys(BOSS_BADGE_LESSON),
+  ...Object.keys(SINGLE_LESSON_BADGE),
   GROWTH_BADGE_NAME,
 ];
 
@@ -168,11 +171,11 @@ export async function awardXP(
     for (const [badgeName, requiredTitles] of Object.entries(PROGRESS_BADGE_LESSONS)) {
       qualifies[badgeName] = requiredTitles.every((title) => passedTitles.has(title));
     }
-    for (const [badgeName, bossTitle] of Object.entries(BOSS_BADGE_LESSON)) {
+    for (const [badgeName, requiredTitle] of Object.entries(SINGLE_LESSON_BADGE)) {
       qualifies[badgeName] = (progressRows ?? []).some(
         (row) =>
           row.passed &&
-          (row.lessons as unknown as { title: string } | null)?.title === bossTitle
+          (row.lessons as unknown as { title: string } | null)?.title === requiredTitle
       );
     }
 

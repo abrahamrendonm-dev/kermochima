@@ -1,0 +1,97 @@
+{
+  "track": {
+    "name": "Track Pre-A: Primeros Descubrimientos",
+    "subject": "Matemáticas",
+    "min_age": 3,
+    "max_age": 3,
+    "order_index": 0
+  },
+  "lessons": [
+    {
+      "title": "Los Colores",
+      "type": "quiz",
+      "xp_reward": 8,
+      "order_index": 1,
+      "content": {
+        "instructions": "Toca el color que se te pide (pide ayuda a un adulto para leer)",
+        "questions": [
+          { "question": "¿Dónde está el color ROJO?", "options": ["🟥", "🟦", "🟩", "🟨"], "answer": "🟥" },
+          { "question": "¿Dónde está el color AZUL?", "options": ["🟩", "🟦", "🟨", "🟪"], "answer": "🟦" },
+          { "question": "¿Dónde está el color VERDE?", "options": ["🟨", "🟥", "🟩", "🟦"], "answer": "🟩" },
+          { "question": "¿Dónde está el color AMARILLO?", "options": ["🟪", "🟩", "🟨", "🟥"], "answer": "🟨" },
+          { "question": "¿Dónde está el color NARANJA?", "options": ["🟧", "🟦", "🟥", "🟩"], "answer": "🟧" }
+        ]
+      }
+    },
+    {
+      "title": "Las Formas",
+      "type": "quiz",
+      "xp_reward": 8,
+      "order_index": 2,
+      "content": {
+        "instructions": "Toca la forma que se te pide",
+        "questions": [
+          { "question": "¿Dónde está el CÍRCULO?", "options": ["🔵", "🟥", "🔺"], "answer": "🔵" },
+          { "question": "¿Dónde está el CUADRADO?", "options": ["🔺", "🟦", "⭐"], "answer": "🟦" },
+          { "question": "¿Dónde está el TRIÁNGULO?", "options": ["🔺", "🔵", "🟨"], "answer": "🔺" },
+          { "question": "¿Dónde está la ESTRELLA?", "options": ["🟩", "🔺", "⭐"], "answer": "⭐" },
+          { "question": "¿Dónde está el CORAZÓN?", "options": ["❤️", "🔵", "🟪"], "answer": "❤️" }
+        ]
+      }
+    },
+    {
+      "title": "Contando hasta 5",
+      "type": "drag_drop",
+      "xp_reward": 10,
+      "order_index": 3,
+      "content": {
+        "instructions": "Arrastra el número que dice cuántos animalitos hay",
+        "items": [
+          { "visual": "🐶", "count": 1, "answer": 1 },
+          { "visual": "🐱🐱", "count": 2, "answer": 2 },
+          { "visual": "🐰🐰🐰", "count": 3, "answer": 3 },
+          { "visual": "🐥🐥🐥🐥", "count": 4, "answer": 4 },
+          { "visual": "🐢🐢🐢🐢🐢", "count": 5, "answer": 5 }
+        ],
+        "options": [1, 2, 3, 4, 5]
+      }
+    },
+    {
+      "title": "Grande y Pequeño",
+      "type": "quiz",
+      "xp_reward": 8,
+      "order_index": 4,
+      "content": {
+        "instructions": "Toca el que se te pide",
+        "questions": [
+          { "question": "¿Cuál es MÁS GRANDE?", "options": ["🐘", "🐭"], "answer": "🐘" },
+          { "question": "¿Cuál es MÁS PEQUEÑO?", "options": ["🐜", "🦒"], "answer": "🐜" },
+          { "question": "¿Cuál es MÁS GRANDE?", "options": ["🌳", "🌱"], "answer": "🌳" },
+          { "question": "¿Cuál es MÁS PEQUEÑO?", "options": ["🐟", "🐋"], "answer": "🐟" },
+          { "question": "¿Cuál es MÁS GRANDE?", "options": ["☀️", "⭐"], "answer": "☀️" }
+        ]
+      }
+    },
+    {
+      "title": "Fiesta de Repaso",
+      "type": "game",
+      "xp_reward": 15,
+      "order_index": 5,
+      "content": {
+        "instructions": "¡Repasemos juntos lo que aprendiste! Sin prisa, tómate tu tiempo",
+        "rounds": [
+          { "task": "compare", "left": "🔵", "right": "🔺", "question": "¿Cuál es el círculo?", "answer": "left" },
+          { "task": "compare", "left": "🟥", "right": "🟦", "question": "¿Cuál es rojo?", "answer": "left" },
+          { "task": "compare", "left": "🐘", "right": "🐭", "question": "¿Cuál es más grande?", "answer": "left" },
+          { "task": "compare", "left": "⭐", "right": "🟩", "question": "¿Cuál es la estrella?", "answer": "left" },
+          { "task": "compare", "left": "🐰🐰🐰", "right": "🐰", "question": "¿Dónde hay más conejitos?", "answer": "left" }
+        ]
+      }
+    }
+  ],
+  "badges_in_track": [
+    { "name": "Explorador de Colores", "category": "progreso", "unlock_condition": "Aprobar (passed) Los Colores y Las Formas" },
+    { "name": "No me rindo", "category": "crecimiento", "unlock_condition": "attempts >= 2 y passed en cualquier lección del track (badge genérica ya existente)" },
+    { "name": "Estrella Pre-A", "category": "progreso", "unlock_condition": "Aprobar (passed) Fiesta de Repaso" }
+  ]
+}

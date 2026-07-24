@@ -109,6 +109,8 @@ const BADGE_ICONS = {
   "Domador del Mercado": "🏅",
   "Sumador Estrella": "➕",
   "Velocista Matemático": "🏃",
+  "Explorador de Colores": "🎨",
+  "Estrella Pre-A": "🌟",
 };
 
 async function upsertBadge(badge) {

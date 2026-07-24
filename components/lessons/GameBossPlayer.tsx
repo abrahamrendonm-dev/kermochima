@@ -122,18 +122,24 @@ function normalizeRounds(content: GameBossContent): NormalizedRound[] {
 
 export function GameBossPlayer({
   content,
+  type,
   onComplete,
 }: {
   content: GameBossContent;
+  type: "game" | "boss";
   onComplete?: (result: { correct: number; total: number }) => void;
 }) {
   const [rounds] = useState(() => normalizeRounds(content));
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<string | number | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
-  const [lives, setLives] = useState<number | null>(content.lives ?? null);
+  // "game" nunca tiene timer/vidas, sin importar qué traiga el content —
+  // no es una omisión incidental porque el JSON no incluya esos campos.
+  const [lives, setLives] = useState<number | null>(
+    type === "boss" ? content.lives ?? null : null
+  );
   const [timeLeft, setTimeLeft] = useState<number | null>(
-    content.time_limit_seconds ?? null
+    type === "boss" ? content.time_limit_seconds ?? null : null
   );
   const [finished, setFinished] = useState(false);
   const finishedRef = useRef(false);
