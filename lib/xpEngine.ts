@@ -8,11 +8,30 @@ const XP_PER_LEVEL = 100;
 // diferencia de solo "completada" (llegar al final, gane o pierda).
 const PASS_THRESHOLD = 0.6;
 
-const TRACK_A_BADGES = {
-  counter: "Contador Estrella (Bronce)",
-  noGiveUp: "No me rindo",
-  bossSlayer: "Domador del Mercado",
-} as const;
+// Insignias "progreso": se otorgan cuando TODAS las lecciones listadas (por
+// título) tienen passed=true para el perfil. Agregar un track nuevo es
+// agregar una entrada aquí, no escribir lógica nueva.
+const PROGRESS_BADGE_LESSONS: Record<string, string[]> = {
+  "Contador Estrella (Bronce)": ["Contando del 1 al 10", "Contando del 11 al 20"],
+  "Sumador Estrella": ["Suma sin llevar", "Suma con llevar"],
+};
+
+// Insignias "boss": se otorgan cuando la lección boss correspondiente (por
+// título) tiene passed=true.
+const BOSS_BADGE_LESSON: Record<string, string> = {
+  "Domador del Mercado": "Reto del Mercado (Boss Final)",
+  "Velocista Matemático": "Carrera de Sumas (Boss Final)",
+};
+
+// Insignia "crecimiento": regla global, no depende de lecciones específicas
+// ni de ningún track — ya era genérica antes de este cambio.
+const GROWTH_BADGE_NAME = "No me rindo";
+
+const ALL_BADGE_NAMES = [
+  ...Object.keys(PROGRESS_BADGE_LESSONS),
+  ...Object.keys(BOSS_BADGE_LESSON),
+  GROWTH_BADGE_NAME,
+];
 
 export type AwardXPResult = {
   xpEarned: number;
@@ -106,13 +125,14 @@ export async function awardXP(
     { onConflict: "profile_id" }
   );
 
-  // --- badges: evaluación simple, hardcoded para Track A ---
+  // --- badges: evaluación simple basada en tablas de datos (ver arriba),
+  // válida para cualquier track sin reescribir lógica ---
   const newBadges: AwardXPResult["newBadges"] = [];
 
   const { data: candidateBadges } = await supabase
     .from("badges")
     .select("id, name, icon")
-    .in("name", Object.values(TRACK_A_BADGES));
+    .in("name", ALL_BADGE_NAMES);
 
   if (candidateBadges && candidateBadges.length > 0) {
     const { data: alreadyEarned } = await supabase
@@ -140,20 +160,20 @@ export async function awardXP(
     const hasFailedThenPassed = (progressRows ?? []).some(
       (row) => row.passed && row.attempts >= 2
     );
-    const bossDefeated = (progressRows ?? []).some(
-      (row) =>
-        row.passed &&
-        (row.lessons as unknown as { title: string } | null)?.title ===
-          "Reto del Mercado (Boss Final)"
-    );
 
     const qualifies: Record<string, boolean> = {
-      [TRACK_A_BADGES.counter]:
-        passedTitles.has("Contando del 1 al 10") &&
-        passedTitles.has("Contando del 11 al 20"),
-      [TRACK_A_BADGES.noGiveUp]: hasFailedThenPassed,
-      [TRACK_A_BADGES.bossSlayer]: bossDefeated,
+      [GROWTH_BADGE_NAME]: hasFailedThenPassed,
     };
+    for (const [badgeName, requiredTitles] of Object.entries(PROGRESS_BADGE_LESSONS)) {
+      qualifies[badgeName] = requiredTitles.every((title) => passedTitles.has(title));
+    }
+    for (const [badgeName, bossTitle] of Object.entries(BOSS_BADGE_LESSON)) {
+      qualifies[badgeName] = (progressRows ?? []).some(
+        (row) =>
+          row.passed &&
+          (row.lessons as unknown as { title: string } | null)?.title === bossTitle
+      );
+    }
 
     for (const badge of candidateBadges) {
       if (earnedIds.has(badge.id)) continue;

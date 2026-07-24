@@ -22,7 +22,11 @@ type CompareTask = {
   question: string;
   answer: "left" | "right";
 };
-type PatternTask = { task: "pattern"; sequence: string[]; answer: string };
+type PatternTask = {
+  task: "pattern";
+  sequence: (string | number)[];
+  answer: string | number;
+};
 type BossTask = CountTask | CompareTask | PatternTask;
 
 export type GameBossContent = {
@@ -47,7 +51,7 @@ type NormalizedRound =
       answer: string;
       options: Option[];
     }
-  | { kind: "pattern"; prompt: string; answer: string; options: Option[] };
+  | { kind: "pattern"; prompt: string; answer: string | number; options: Option[] };
 
 const BALANCE_OPTIONS: Option[] = [
   { value: "left", label: "Izquierda" },
@@ -100,12 +104,18 @@ function normalizeRounds(content: GameBossContent): NormalizedRound[] {
         options: COMPARE_OPTIONS,
       };
     }
+    // Los símbolos de la secuencia (excluyendo "?") sirven de distractores.
+    // No asumas que la respuesta ya aparece ahí: en patrones aritméticos
+    // (ej. 5,10,15,20,? -> 25) el siguiente valor es nuevo, no una repetición.
     const symbols = Array.from(new Set(round.sequence.filter((s) => s !== "?")));
+    const optionValues = symbols.includes(round.answer)
+      ? symbols
+      : [...symbols, round.answer];
     return {
       kind: "pattern",
       prompt: formatPatternSequence(round.sequence),
       answer: round.answer,
-      options: symbols.map((s) => ({ value: s, label: s })),
+      options: optionValues.map((s) => ({ value: s, label: String(s) })),
     };
   });
 }

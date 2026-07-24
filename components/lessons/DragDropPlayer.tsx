@@ -14,7 +14,7 @@ export type DragDropContent = {
 
 type Round = { prompt: string; answer: string | number };
 
-export function formatPatternSequence(sequence: string[]): string {
+export function formatPatternSequence(sequence: (string | number)[]): string {
   return sequence.join("  ");
 }
 

@@ -107,6 +107,8 @@ const BADGE_ICONS = {
   "Contador Estrella (Bronce)": "🥉",
   "No me rindo": "💪",
   "Domador del Mercado": "🏅",
+  "Sumador Estrella": "➕",
+  "Velocista Matemático": "🏃",
 };
 
 async function upsertBadge(badge) {
