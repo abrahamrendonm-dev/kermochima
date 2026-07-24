@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 const XP_PER_LEVEL = 100;
@@ -185,6 +186,10 @@ export async function awardXP(
       if (!error) newBadges.push(badge);
     }
   }
+
+  // El dashboard es un server component; sin esto, navegar de vuelta a él
+  // podría mostrar el XP/progreso previo al Router Cache del cliente.
+  revalidatePath(`/dashboard/${profileId}`);
 
   return {
     xpEarned,

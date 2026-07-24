@@ -4,10 +4,12 @@ import type { AwardXPResult } from "@/lib/xpEngine";
 
 export function XPToast({
   result,
-  onClose,
+  onContinue,
+  onNext,
 }: {
   result: AwardXPResult;
-  onClose: () => void;
+  onContinue: () => void;
+  onNext?: () => void;
 }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 p-4">
@@ -46,12 +48,26 @@ export function XPToast({
           </div>
         )}
 
-        <button
-          onClick={onClose}
-          className="mt-2 rounded-lg bg-indigo-600 px-6 py-2 font-medium text-white hover:bg-indigo-700"
-        >
-          Continuar
-        </button>
+        <div className="mt-2 flex gap-2">
+          {onNext && (
+            <button
+              onClick={onNext}
+              className="rounded-lg bg-indigo-600 px-6 py-2 font-medium text-white hover:bg-indigo-700"
+            >
+              Siguiente lección
+            </button>
+          )}
+          <button
+            onClick={onContinue}
+            className={
+              onNext
+                ? "rounded-lg border border-gray-300 px-6 py-2 font-medium text-gray-700 hover:bg-gray-50"
+                : "rounded-lg bg-indigo-600 px-6 py-2 font-medium text-white hover:bg-indigo-700"
+            }
+          >
+            Continuar
+          </button>
+        </div>
       </div>
     </div>
   );

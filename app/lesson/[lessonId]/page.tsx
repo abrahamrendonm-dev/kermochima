@@ -19,13 +19,22 @@ export default async function LessonPage({
 
   const { data: lesson } = await supabase
     .from("lessons")
-    .select("id, title, type, content, xp_reward")
+    .select("id, title, type, content, xp_reward, track_id, order_index")
     .eq("id", params.lessonId)
     .single();
 
   if (!lesson) {
     notFound();
   }
+
+  const { data: nextLesson } = await supabase
+    .from("lessons")
+    .select("id")
+    .eq("track_id", lesson.track_id)
+    .gt("order_index", lesson.order_index)
+    .order("order_index", { ascending: true })
+    .limit(1)
+    .maybeSingle();
 
   if (!profileId) {
     return (
@@ -47,6 +56,7 @@ export default async function LessonPage({
       {RUNNABLE_TYPES.includes(lesson.type) ? (
         <LessonRunner
           profileId={profileId}
+          nextLessonId={nextLesson?.id ?? null}
           lesson={{
             id: lesson.id,
             type: lesson.type,

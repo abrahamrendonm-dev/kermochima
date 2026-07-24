@@ -24,9 +24,11 @@ type Lesson = {
 export function LessonRunner({
   lesson,
   profileId,
+  nextLessonId,
 }: {
   lesson: Lesson;
   profileId: string;
+  nextLessonId: string | null;
 }) {
   const router = useRouter();
   const [result, setResult] = useState<AwardXPResult | null>(null);
@@ -67,10 +69,12 @@ export function LessonRunner({
       {result && (
         <XPToast
           result={result}
-          onClose={() => {
-            setResult(null);
-            router.refresh();
-          }}
+          onContinue={() => router.push(`/dashboard/${profileId}`)}
+          onNext={
+            nextLessonId
+              ? () => router.push(`/lesson/${nextLessonId}`)
+              : undefined
+          }
         />
       )}
     </>
