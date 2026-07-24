@@ -2,7 +2,11 @@
 
 import { useRef, useState } from "react";
 
-type ItemRound = { visual: string; count: number; answer: number };
+type ItemRound = {
+  visual: string;
+  count: number | null;
+  answer: string | number;
+};
 type PatternRound = { sequence: string[]; answer: string };
 
 export type DragDropContent = {
@@ -20,10 +24,16 @@ export function formatPatternSequence(sequence: (string | number)[]): string {
 
 function buildRounds(content: DragDropContent): Round[] {
   if (content.items) {
-    return content.items.map((item) => ({
-      prompt: item.visual.repeat(item.count),
-      answer: item.answer,
-    }));
+    return content.items.map((item) => {
+      // count es null cuando "visual" ya es el texto completo a mostrar
+      // (ej. "En el número 47, el 4 representa:"), en vez de un glifo a
+      // repetir N veces (ej. 🍎 x count para contar frutas).
+      const count = item.count;
+      return {
+        prompt: count != null ? item.visual.repeat(count) : item.visual,
+        answer: item.answer,
+      };
+    });
   }
   if (content.patterns) {
     return content.patterns.map((pattern) => ({
@@ -133,16 +143,16 @@ export function DragDropPlayer({
 
       <div
         ref={dropZoneRef}
-        className={`flex min-h-[7rem] min-w-[16rem] items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-8 transition ${
+        className={`flex min-h-[7rem] w-full max-w-md flex-wrap items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-8 text-center transition ${
           overTarget
             ? "border-indigo-500 bg-indigo-100"
             : "border-indigo-200 bg-indigo-50"
         }`}
       >
-        <p className="text-4xl tracking-wide">{round.prompt}</p>
+        <p className="text-2xl">{round.prompt}</p>
         {selected !== null && (
           <span
-            className={`text-4xl font-bold ${
+            className={`text-2xl font-bold ${
               selected === round.answer ? "text-green-600" : "text-red-500"
             }`}
           >
@@ -169,7 +179,7 @@ export function DragDropPlayer({
               onPointerDown={(e) => handlePointerDown(e, option)}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
-              className={`flex h-14 w-14 touch-none select-none items-center justify-center rounded-xl border-2 text-xl font-medium transition ${style} ${
+              className={`flex min-h-[3.5rem] min-w-[3.5rem] touch-none select-none items-center justify-center whitespace-nowrap rounded-xl border-2 px-4 py-2 text-lg font-medium transition ${style} ${
                 isBeingDragged
                   ? "cursor-grabbing opacity-30"
                   : "cursor-grab active:cursor-grabbing"
@@ -183,7 +193,7 @@ export function DragDropPlayer({
 
       {dragging && (
         <div
-          className="pointer-events-none fixed z-50 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border-2 border-indigo-500 bg-white text-xl font-medium shadow-lg"
+          className="pointer-events-none fixed z-50 flex min-h-[3.5rem] min-w-[3.5rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center whitespace-nowrap rounded-xl border-2 border-indigo-500 bg-white px-4 py-2 text-lg font-medium shadow-lg"
           style={{ left: dragging.x, top: dragging.y }}
         >
           {dragging.option}
